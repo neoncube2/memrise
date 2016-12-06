@@ -6,6 +6,8 @@
 // @author       Eli Black
 // @match        http://www.memrise.com/course/*/*/edit/
 // @grant        MIT
+// @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/replace_commas_with_semicolons/replace_commas_with_semicolons.js
+// @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/replace_commas_with_semicolons/replace_commas_with_semicolons.js
 // ==/UserScript==
 
 function processRow(rows, rowIndex) {
