@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Memrise - Replace commas with semicolons
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.0
+// @version      0.8
 // @description  Replaces commas with semicolons for the textual values that are in a course.
 // @author       Eli Black
 // @match        http://www.memrise.com/course/*/*/edit/
