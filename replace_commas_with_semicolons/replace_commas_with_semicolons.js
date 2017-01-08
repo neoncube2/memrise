@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Memrise - Replace commas with semicolons
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.0
+// @version      1.1
 // @description  Replaces commas with semicolons for the textual values that are in a course.
 // @author       Eli Black
 // @match        http://www.memrise.com/course/*/*/edit/
@@ -9,6 +9,8 @@
 // @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/replace_commas_with_semicolons/replace_commas_with_semicolons.js
 // @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/replace_commas_with_semicolons/replace_commas_with_semicolons.js
 // ==/UserScript==
+
+var beginIfLevelsHaveLoadedInterval;
 
 function processRow(rows, rowIndex) {
     if(rowIndex >= rows.length) {
@@ -30,6 +32,8 @@ function processRow(rows, rowIndex) {
         var thing = thingData.thing;
         
         var encounteredError = false;
+        
+        var columnsAndNewValues = [];
 
         for(var columnId in thing.columns) {
             var column = thing.columns[columnId];
@@ -43,14 +47,16 @@ function processRow(rows, rowIndex) {
             if(entryValue.indexOf(',') == -1) {
                 continue;
             }
-
-            entryValue = entryValue.replace(',', ';');
-
+            
+            columnsAndNewValues[columnId] = entryValue.replace(',', ';');
+        }
+        
+        for(var columnId in columnsAndNewValues) {
             $.post('http://www.memrise.com/ajax/thing/cell/update/', {
                 'thing_id': thingId,
                 'cell_id': columnId,
                 'cell_type': 'column',
-                'new_val': entryValue
+                'new_val': columnsAndNewValues[columnId]
             })
             .fail(function() {
                 alert('Encountered an error posting a correction.');
@@ -60,6 +66,11 @@ function processRow(rows, rowIndex) {
                 row.css('background-color', 'red');
             })
             .success(function() {
+                console.log(columnsAndNewValues);
+                
+                var columnIdIndex = columnsAndNewValues.indexOf(columnId);
+                columnsAndNewValues.splice(columnIdIndex, 1);
+                
                 if(!encounteredError) {
                     row.css('background-color', 'lightgreen');
                 }
@@ -82,10 +93,39 @@ function cleanLevels() {
     var rows = $('.level-things .thing');
     
     if(!rows.length) {
-        console.log('Didn\'t find any items in the level.');
+        console.log('Didn\'t find any items.');
     }
     
     processRow(rows, 0);
+}
+
+function isLevelLoading(level) {
+    level = $(level);
+    
+    return !level.hasClass('collapsed') && level.find('.level-loading').length;
+}
+
+function beginIfLevelsHaveLoaded() {
+    var levels = $('.level');
+    
+    var isLoading = false;
+    
+    levels.each(function() {
+        if(isLevelLoading(this)) {
+            isLoading = true;
+           
+           return false;
+        }
+    });
+    
+    if(!isLoading) {
+        console.log('Beginning');
+        
+        clearInterval(beginIfLevelsHaveLoadedInterval);
+
+        cleanLevels();
+        
+    }
 }
 
 (function() {
@@ -94,10 +134,12 @@ function cleanLevels() {
         
         var levels = $('.level');
         
-        levels.each(function() {
+        // Make it so that the levels are opened from bottom to top,
+        // so that the page doesn't scroll down and then scroll back up.
+        $(levels.get().reverse()).each(function() {
             var level = $(this);
 
-            if(!level.find('.things').length) {
+            if(!isLevelLoading(level)) {
                 level.find('.show-hide').click();
             }
         });
@@ -105,7 +147,7 @@ function cleanLevels() {
         // Thanks to http://stackoverflow.com/questions/1144805/scroll-to-the-top-of-the-page-using-javascript-jquery
         $("html, body").animate({ scrollTop: 0 }, "slow");
 
-        setTimeout(cleanLevels, 10000);
+        beginIfLevelsHaveLoadedInterval = setInterval(beginIfLevelsHaveLoaded, 1000);
     });
     
     beginButton.appendTo($('.add-level'));
