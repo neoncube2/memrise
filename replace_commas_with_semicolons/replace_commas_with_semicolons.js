@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Memrise - Replace commas with semicolons
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.1
+// @version      1.2
 // @description  Replaces commas with semicolons for the textual values that are in a course.
 // @author       Eli Black
 // @match        http://www.memrise.com/course/*/*/edit/
@@ -10,83 +10,121 @@
 // @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/replace_commas_with_semicolons/replace_commas_with_semicolons.js
 // ==/UserScript==
 
+
+// Note that attributes aren't modified by this script.
+
+var CHARACTER_TO_REPLACE = ',';
+var CHARACTER_TO_REPLACE_WITH = ';';
+
+var examinedItems = [];
+
+var numUnfinishedRequests = 0;
+
 var beginIfLevelsHaveLoadedInterval;
 
+function checkIsFinished(rows, rowIndex) {
+	if(rowIndex + 1 == rows.length && !numUnfinishedRequests) {
+		alert('Finished.');
+	}
+}
+
 function processRow(rows, rowIndex) {
-    if(rowIndex >= rows.length) {
-        alert('The script has mostly finished processing. Please wait a few seconds before leaving this page so that any updates that are currently in progress have a chance to finish.');
-        
-        return;
-    }
-    
-    var row = $(rows[rowIndex]);
-        
-    row.css('background-color', 'lightgrey');
-
+	if(rowIndex == rows.length) {
+		return;
+	}
+	
+	var row = $(rows[rowIndex]);
+	
     var thingId = row.data('thing-id');
+	
+	if(!examinedItems[thingId]) {
+		console.log('Attempting to retrieve information about thing #' + thingId);
+		
+		examinedItems[thingId] = true;
+		
+		numUnfinishedRequests++;
 
-    console.log('Attempting to retrieve information about thing #' + thingId);
+		// Is an _ parameter needed?
+		$.get('//www.memrise.com/api/thing/get/?thing_id=' + encodeURIComponent(thingId), function(thingData) {
+			var thing = thingData.thing;
+			
+			var encounteredError = false;
+			
+			var columnsAndNewValues = [];
 
-    // Is an _ parameter needed?
-    $.get('//www.memrise.com/api/thing/get/?thing_id=' + encodeURIComponent(thingId), function(thingData) {
-        var thing = thingData.thing;
-        
-        var encounteredError = false;
-        
-        var columnsAndNewValues = [];
+			for(var columnId in thing.columns) {
+				var column = thing.columns[columnId];
 
-        for(var columnId in thing.columns) {
-            var column = thing.columns[columnId];
+				if(column.kind != 'text') {
+					continue;
+				}
 
-            if(column.kind != 'text') {
-                continue;
-            }
+				var entryValue = column.val;
 
-            var entryValue = column.val;
-
-            if(entryValue.indexOf(',') == -1) {
-                continue;
-            }
-            
-            columnsAndNewValues[columnId] = entryValue.replace(',', ';');
-        }
-        
-        for(var columnId in columnsAndNewValues) {
-            $.post('http://www.memrise.com/ajax/thing/cell/update/', {
-                'thing_id': thingId,
-                'cell_id': columnId,
-                'cell_type': 'column',
-                'new_val': columnsAndNewValues[columnId]
-            })
-            .fail(function() {
-                alert('Encountered an error posting a correction.');
-                
-                encounteredError = true;
-                
-                row.css('background-color', 'red');
-            })
-            .success(function() {
-                console.log(columnsAndNewValues);
-                
-                var columnIdIndex = columnsAndNewValues.indexOf(columnId);
-                columnsAndNewValues.splice(columnIdIndex, 1);
-                
-                if(!encounteredError) {
-                    row.css('background-color', 'lightgreen');
-                }
-            });
-        }
-    })
-    .fail(function() {
-        alert('Encountered an error retrieving an item.');
-        
-        row.css('background-color', 'red');
-    })
-    .always(function() {
-        processRow(rows, rowIndex + 1);
-    });
-    
-   
+				if(entryValue.indexOf(CHARACTER_TO_REPLACE) == -1) {
+					continue;
+				}
+				
+				// Thanks to http://stackoverflow.com/a/17606289
+				columnsAndNewValues[columnId] = entryValue.replace(new RegExp(CHARACTER_TO_REPLACE, 'g'), CHARACTER_TO_REPLACE_WITH);
+			}
+			
+			if(columnsAndNewValues.length) {
+				for(var columnId in columnsAndNewValues) {
+					numUnfinishedRequests++;
+					
+					$.post('http://www.memrise.com/ajax/thing/cell/update/', {
+						'thing_id': thingId,
+						'cell_id': columnId,
+						'cell_type': 'column',
+						'new_val': columnsAndNewValues[columnId]
+					})
+					.fail(function() {
+						alert('Encountered an error posting a correction.');
+						
+						encounteredError = true;
+						
+						row.css('background-color', 'red');
+					})
+					.success(function() {
+						console.log(columnsAndNewValues);
+						
+						var columnIdIndex = columnsAndNewValues.indexOf(columnId);
+						columnsAndNewValues.splice(columnIdIndex, 1);
+						
+						if(!encounteredError) {
+							row.css('background-color', 'lightgreen');
+						}
+					})
+					.always(function() {
+						numUnfinishedRequests--;
+						
+						checkIsFinished(rows, rowIndex);
+					});
+				}
+			}
+			else {
+				row.css('background-color', 'lightgrey');
+			}
+		})
+		.fail(function() {
+			alert('Encountered an error retrieving an item.');
+			
+			row.css('background-color', 'red');
+		})
+		.always(function() {
+			numUnfinishedRequests--;
+						
+			checkIsFinished(rows, rowIndex);
+			
+			processRow(rows, rowIndex + 1);
+		});
+	}
+	else {
+		row.css('background-color', 'lightgrey');
+		
+		processRow(rows, rowIndex + 1);
+	}
 }
 
 function cleanLevels() {
@@ -97,6 +135,8 @@ function cleanLevels() {
     }
     
     processRow(rows, 0);
+	
+	checkIsFinished(rows, rows.length-1);
 }
 
 function isLevelLoading(level) {
