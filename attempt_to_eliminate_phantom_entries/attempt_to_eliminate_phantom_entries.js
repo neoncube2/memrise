@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name         Memrise - Attempt to eliminate ghost entries
+// @name         Memrise - Attempt to eliminate phantom entries
 // @namespace    https://github.com/neoncube2/memrise
 // @version      1.0
-// @description  Attempts to eliminate the ghost entries in a course.
+// @description  Attempts to eliminate the phantom entries in a course.
 // @author       Eli Black
 // @match        http://www.memrise.com/course/*/*/edit/
 // @match        https://www.memrise.com/course/*/*/edit/
-// @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_ghost_entries/attempt_to_eliminate_ghost_entries.js
-// @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_ghost_entries/attempt_to_eliminate_ghost_entries.js
+// @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.js
+// @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.js
 // @grant        MIT
 // ==/UserScript==
 
@@ -163,7 +163,7 @@ function beginIfLevelsHaveLoaded() {
 }
 
 (function() {
-	var beginButton = $('<button class="show-hide btn">Attempt to eliminate ghost entries</button>').click(function() {
+	var beginButton = $('<button class="show-hide btn">Attempt to eliminate phantom entries</button>').click(function() {
 		$(this).parent().find('button').attr('disabled', 'disabled');
 		
 		var levels = $('.level');
