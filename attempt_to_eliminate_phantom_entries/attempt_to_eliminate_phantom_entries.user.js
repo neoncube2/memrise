@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Memrise - Attempt to eliminate phantom entries
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.0
+// @version      1.1
 // @description  Attempts to eliminate the phantom entries in a course.
 // @author       Eli Black
 // @match        http://www.memrise.com/course/*/*/edit/
 // @match        https://www.memrise.com/course/*/*/edit/
-// @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.js
-// @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.js
+// @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.user.js
+// @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.user.js
 // @grant        MIT
 // ==/UserScript==
 
