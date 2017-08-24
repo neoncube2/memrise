@@ -1,24 +1,24 @@
 // ==UserScript==
 // @name         Memrise - Attempt to eliminate phantom entries
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.1
+// @version      1.2
 // @description  Attempts to eliminate the phantom entries in a course.
 // @author       Eli Black
-// @match        http://www.memrise.com/course/*/*/edit/
-// @match        https://www.memrise.com/course/*/*/edit/
+// @match        http://www.memrise.com/course/*/*/edit/*
+// @match        https://www.memrise.com/course/*/*/edit/*
 // @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.user.js
 // @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.user.js
-// @grant        MIT
+// @grant        none
 // ==/UserScript==
 
 
 // Note that attributes aren't modified by this script.
 
+
 var examinedItems = {};
-
 var numUnfinishedRequests = 0;
-
 var beginIfLevelsHaveLoadedInterval;
+
 
 function postColumn(thingId, rows, row, rowIndex, columnsAndNewValues, columnsAndNewValuesIndex) {
 	let columnsAndNewValuesKeys = Object.keys(columnsAndNewValues);
