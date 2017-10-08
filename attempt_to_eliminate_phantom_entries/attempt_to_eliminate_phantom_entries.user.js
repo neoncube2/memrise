@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Memrise - Attempt to eliminate phantom entries
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.2
+// @version      1.2.1
 // @description  Attempts to eliminate the phantom entries in a course.
 // @author       Eli Black
 // @match        http://www.memrise.com/course/*/*/edit/*
@@ -38,7 +38,7 @@ function postColumn(thingId, rows, row, rowIndex, columnsAndNewValues, columnsAn
 		
 		row.css('background-color', 'red');
 	})
-	.success(function() {
+	.done(function() {
 		if(row.css('background-color') != 'red') {
 			row.css('background-color', 'lightgreen');
 		}
