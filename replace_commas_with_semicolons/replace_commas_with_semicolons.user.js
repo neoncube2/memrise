@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Memrise - Replace commas with semicolons
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.7
+// @version      1.8
 // @description  Replaces the commas that are in a course with semicolons. Memrise used to use commas as a separator but has now switched to using semicolons and slashes.
 // @author       Eli Black
 // @match        http://www.memrise.com/course/*/*/edit/*
@@ -131,7 +131,7 @@ function postColumn(thingId, rows, row, rowIndex, columnsAndNewValues, columnsAn
 		
 		row.css('background-color', 'red');
 	})
-	.success(function() {
+	.done(function() {
 		if(row.css('background-color') != 'red') {
 			row.css('background-color', 'lightgreen');
 		}
