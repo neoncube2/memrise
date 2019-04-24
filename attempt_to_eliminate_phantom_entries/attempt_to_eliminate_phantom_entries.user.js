@@ -1,19 +1,25 @@
 // ==UserScript==
 // @name         Memrise - Attempt to eliminate phantom entries
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.2.1
+// @version      1.3.0
 // @description  Attempts to eliminate the phantom entries in a course.
 // @author       Eli Black
 // @match        http://www.memrise.com/course/*/*/edit/*
 // @match        https://www.memrise.com/course/*/*/edit/*
+// @match        https://decks.memrise.com/course/*/*/edit/*
 // @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.user.js
 // @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.user.js
 // @grant        none
 // ==/UserScript==
 
 
+// Forum thread for this userscript: https://community.memrise.com/t/userscript-attempt-to-eliminate-phantom-entries/14432
+
+
 // Note that attributes aren't modified by this script.
 
+
+const HOSTNAME = window.location.hostname;
 
 var examinedItems = {};
 var numUnfinishedRequests = 0;
@@ -27,14 +33,15 @@ function postColumn(thingId, rows, row, rowIndex, columnsAndNewValues, columnsAn
 		
 	numUnfinishedRequests++;
 	
-	$.post('//www.memrise.com/ajax/thing/cell/update/', {
+	$.post(`//${HOSTNAME}/ajax/thing/cell/update/`, {
 		'thing_id': thingId,
 		'cell_id': columnId,
 		'cell_type': 'column',
-		'new_val': columnsAndNewValues[columnId]
+		'new_val': columnsAndNewValues[columnId],
+		'f': 2
 	})
 	.fail(function() {
-		alert('Encountered an error posting a column\'s new value.');
+		alert(`Encountered an error posting a column's new value.`);
 		
 		row.css('background-color', 'red');
 	})
@@ -70,14 +77,14 @@ function processRow(rows, rowIndex) {
 	var thingId = row.data('thing-id');
 	
 	if(!examinedItems[thingId]) {
-		console.log('Attempting to retrieve information about thing #' + thingId);
+		console.log(`Attempting to retrieve information about thing #${thingId}`);
 		
 		examinedItems[thingId] = true;
 		
 		numUnfinishedRequests++;
 
 		// Is an _ parameter needed?
-		$.get('//www.memrise.com/api/thing/get/?thing_id=' + encodeURIComponent(thingId), function(thingData) {
+		$.get(`//${HOSTNAME}/api/thing/get/?thing_id=${encodeURIComponent(thingId)}`, function(thingData) {
 			var thing = thingData.thing;
 			
 			var encounteredError = false;
@@ -102,7 +109,7 @@ function processRow(rows, rowIndex) {
 			}
 		})
 		.fail(function() {
-			alert('Encountered an error retrieving an item.');
+			alert(`Encountered an error retrieving an item.`);
 			
 			row.css('background-color', 'red');
 		})
@@ -125,7 +132,7 @@ function cleanLevels() {
 	var rows = $('.level-things .thing');
 	
 	if(!rows.length) {
-		console.log('Didn\'t find any items.');
+		console.log(`Didn't find any items.`);
 	}
 	
 	processRow(rows, 0);
@@ -153,7 +160,7 @@ function beginIfLevelsHaveLoaded() {
 	});
 	
 	if(!isLoading) {
-		console.log('Beginning');
+		console.log(`Beginning`);
 		
 		clearInterval(beginIfLevelsHaveLoadedInterval);
 
@@ -163,7 +170,7 @@ function beginIfLevelsHaveLoaded() {
 }
 
 (function() {
-	var beginButton = $('<button class="show-hide btn">Attempt to eliminate phantom entries</button>').click(function() {
+	var beginButton = $(`<button class="show-hide btn">Attempt to eliminate phantom entries</button>`).click(function() {
 		$(this).parent().find('button').attr('disabled', 'disabled');
 		
 		var levels = $('.level');
