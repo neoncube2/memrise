@@ -1,17 +1,17 @@
 // ==UserScript==
 // @name         Memrise - Attempt to eliminate phantom entries
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.4.2
+// @version      1.4.3
 // @description  Attempts to eliminate the phantom entries in a course.
 // @author       Eli Black
-// @match        https://community-courses.memrise.com/community/course/*/*/edit/*
+// @match        https://community-courses.memrise.com/course/*/*/edit/
 // @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.user.js
 // @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.user.js
 // @grant        none
 // ==/UserScript==
 
 
-// Forum thread for this userscript: https://community.memrise.com/t/userscript-attempt-to-eliminate-phantom-entries/14432
+// Forum thread for this userscript: https://memriseforum.mylittlewordland.com/community.memrise.com/t/userscript-attempt-to-eliminate-phantom-entries/14432.html
 
 
 // Note that attributes aren't modified by this script.

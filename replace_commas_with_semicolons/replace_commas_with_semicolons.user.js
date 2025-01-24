@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Memrise - Replace commas with semicolons
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.11
+// @version      1.12
 // @description  Replaces the commas that are in a course with semicolons. Memrise used to use commas as a separator but has now switched to using semicolons and slashes.
 // @author       Eli Black
-// @match        https://community-courses.memrise.com/community/course/*/*/edit/*
+// @match        https://community-courses.memrise.com/course/*/*/edit/
 // @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/replace_commas_with_semicolons/replace_commas_with_semicolons.user.js
 // @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/replace_commas_with_semicolons/replace_commas_with_semicolons.user.js
 // @grant        none
