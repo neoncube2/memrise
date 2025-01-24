@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Memrise - Replace commas with semicolons
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.10
+// @version      1.11
 // @description  Replaces the commas that are in a course with semicolons. Memrise used to use commas as a separator but has now switched to using semicolons and slashes.
 // @author       Eli Black
-// @match        https://community-courses.memrise.com/course/*/*/edit/*
+// @match        https://community-courses.memrise.com/community/course/*/*/edit/*
 // @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/replace_commas_with_semicolons/replace_commas_with_semicolons.user.js
 // @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/replace_commas_with_semicolons/replace_commas_with_semicolons.user.js
 // @grant        none
@@ -127,24 +127,24 @@ function postColumn(thingId, rows, row, rowIndex, columnsAndNewValues, columnsAn
         'new_val': columnsAndNewValues[columnId]
     })
         .fail(function () {
-        alert('Encountered an error posting a column\'s new value.');
+            alert('Encountered an error posting a column\'s new value.');
 
-        row.css('background-color', 'red');
-    })
+            row.css('background-color', 'red');
+        })
         .done(function () {
-        if (row.css('background-color') != 'red') {
-            row.css('background-color', 'lightgreen');
-        }
-    })
+            if (row.css('background-color') != 'red') {
+                row.css('background-color', 'lightgreen');
+            }
+        })
         .always(function () {
-        numUnfinishedRequests--;
+            numUnfinishedRequests--;
 
-        if (columnsAndNewValuesIndex + 1 < columnsAndNewValuesKeys.length) {
-            postColumn(thingId, rows, row, rowIndex, columnsAndNewValues, columnsAndNewValuesIndex + 1)
-        }
+            if (columnsAndNewValuesIndex + 1 < columnsAndNewValuesKeys.length) {
+                postColumn(thingId, rows, row, rowIndex, columnsAndNewValues, columnsAndNewValuesIndex + 1)
+            }
 
-        checkIsFinished(rows, rowIndex);
-    });
+            checkIsFinished(rows, rowIndex);
+        });
 }
 
 function checkIsFinished(rows, rowIndex) {
@@ -214,17 +214,17 @@ function processRow(rows, rowIndex) {
             }
         })
             .fail(function () {
-            alert('Encountered an error retrieving an item.');
+                alert('Encountered an error retrieving an item.');
 
-            row.css('background-color', 'red');
-        })
+                row.css('background-color', 'red');
+            })
             .always(function () {
-            numUnfinishedRequests--;
+                numUnfinishedRequests--;
 
-            checkIsFinished(rows, rowIndex);
+                checkIsFinished(rows, rowIndex);
 
-            processRow(rows, rowIndex + 1);
-        });
+                processRow(rows, rowIndex + 1);
+            });
     }
     else {
         row.css('background-color', 'lightgrey');

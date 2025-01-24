@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Memrise - Attempt to eliminate phantom entries
 // @namespace    https://github.com/neoncube2/memrise
-// @version      1.4.1
+// @version      1.4.2
 // @description  Attempts to eliminate the phantom entries in a course.
 // @author       Eli Black
-// @match        https://community-courses.memrise.com/course/*/*/edit/*
+// @match        https://community-courses.memrise.com/community/course/*/*/edit/*
 // @updateURL    https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.user.js
 // @downloadURL  https://raw.githubusercontent.com/neoncube2/memrise/master/attempt_to_eliminate_phantom_entries/attempt_to_eliminate_phantom_entries.user.js
 // @grant        none
@@ -39,24 +39,24 @@ function postColumn(thingId, rows, row, rowIndex, columnsAndNewValues, columnsAn
         'f': 2
     })
         .fail(function () {
-        alert(`Encountered an error posting a column's new value.`);
+            alert(`Encountered an error posting a column's new value.`);
 
-        row.css('background-color', 'red');
-    })
+            row.css('background-color', 'red');
+        })
         .done(function () {
-        if (row.css('background-color') != 'red') {
-            row.css('background-color', 'lightgreen');
-        }
-    })
+            if (row.css('background-color') != 'red') {
+                row.css('background-color', 'lightgreen');
+            }
+        })
         .always(function () {
-        numUnfinishedRequests--;
+            numUnfinishedRequests--;
 
-        if (columnsAndNewValuesIndex + 1 < columnsAndNewValuesKeys.length) {
-            postColumn(thingId, rows, row, rowIndex, columnsAndNewValues, columnsAndNewValuesIndex + 1);
-        }
+            if (columnsAndNewValuesIndex + 1 < columnsAndNewValuesKeys.length) {
+                postColumn(thingId, rows, row, rowIndex, columnsAndNewValues, columnsAndNewValuesIndex + 1);
+            }
 
-        checkIsFinished(rows, rowIndex);
-    });
+            checkIsFinished(rows, rowIndex);
+        });
 }
 
 function checkIsFinished(rows, rowIndex) {
@@ -107,17 +107,17 @@ function processRow(rows, rowIndex) {
             }
         })
             .fail(function () {
-            alert(`Encountered an error retrieving an item.`);
+                alert(`Encountered an error retrieving an item.`);
 
-            row.css('background-color', 'red');
-        })
+                row.css('background-color', 'red');
+            })
             .always(function () {
-            numUnfinishedRequests--;
+                numUnfinishedRequests--;
 
-            checkIsFinished(rows, rowIndex);
+                checkIsFinished(rows, rowIndex);
 
-            processRow(rows, rowIndex + 1);
-        });
+                processRow(rows, rowIndex + 1);
+            });
     }
     else {
         row.css('background-color', 'lightgrey');
